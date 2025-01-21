@@ -21,9 +21,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
-                .formLogin((formLogin) ->
-                        formLogin.loginPage("/login")
-                                .defaultSuccessUrl("/"))
+                .formLogin(AbstractHttpConfigurer::disable)
                 .logout((logout) ->
                         logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                 .logoutSuccessUrl("/login")

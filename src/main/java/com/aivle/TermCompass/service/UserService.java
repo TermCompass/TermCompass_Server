@@ -42,14 +42,19 @@ public class UserService {
         return user;
     }
 
-    public boolean authenticate(String email, String password) {
+    public User authenticate(String email, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-            return false; // 유저를 찾지 못한 경우
+            return null; // 유저를 찾지 못한 경우
         }
 
         User user = optionalUser.get();
-        return passwordEncoder.matches(password, user.getPassword());
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return null;
+        }
+
+        return user;
     }
 }

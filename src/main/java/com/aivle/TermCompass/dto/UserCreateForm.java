@@ -1,5 +1,6 @@
-package com.aivle.TermCompass.domain;
+package com.aivle.TermCompass.dto;
 
+import com.aivle.TermCompass.domain.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

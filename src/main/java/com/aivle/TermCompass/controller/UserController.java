@@ -1,19 +1,19 @@
 package com.aivle.TermCompass.controller;
 
 import com.aivle.TermCompass.domain.User;
-import com.aivle.TermCompass.domain.UserCreateForm;
+import com.aivle.TermCompass.dto.UserCreateForm;
 import com.aivle.TermCompass.dto.LoginRequest;
 import com.aivle.TermCompass.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,11 +39,18 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        if(!userService.authenticate(request.getEmail(), request.getPassword())) {
+    public ResponseEntity<Object> login(@RequestBody LoginRequest request) {
+        User user = userService.authenticate(request.getEmail(), request.getPassword());
+
+        if(user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password. Please try again.");
         }
 
-        return ResponseEntity.ok("Login successful");
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("name", user.getName());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("account_type", user.getAccount_type());
+
+        return ResponseEntity.ok(userInfo);
     }
 }
