@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,6 +34,9 @@ public class User {
 
     @Column
     private LocalDateTime created_at;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Record> records = new ArrayList<>();
 
     public enum AccountType {
         PERSONAL, COMPANY, ADMIN

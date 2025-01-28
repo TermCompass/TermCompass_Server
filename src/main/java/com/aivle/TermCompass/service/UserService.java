@@ -57,4 +57,10 @@ public class UserService {
 
         return user;
     }
+
+    public boolean checkDuplicate(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        return optionalUser.isEmpty(); // 유저를 찾지 못한 경우
+    }
 }
