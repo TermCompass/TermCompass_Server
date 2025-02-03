@@ -42,11 +42,17 @@ public class UserService {
         return user;
     }
 
+    public User findByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        return optionalUser.orElse(null);
+    }
+
     public User authenticate(String email, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-            return null; // 유저를 찾지 못한 경우
+            return null;
         }
 
         User user = optionalUser.get();
@@ -58,9 +64,34 @@ public class UserService {
         return user;
     }
 
+    public User adminAuthenticate(String email, String password) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            return null;
+        }
+
+        User user = optionalUser.get();
+
+        if (user.getAccount_type() != User.AccountType.ADMIN || !passwordEncoder.matches(password, user.getPassword())) {
+            return null;
+        }
+
+        return user;
+    }
+
     public boolean checkDuplicate(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         return optionalUser.isEmpty(); // 유저를 찾지 못한 경우
+    }
+
+    public void updatePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    public boolean checkPassword(User user, String oldPassword) {
+        return passwordEncoder.matches(oldPassword, user.getPassword());
     }
 }
