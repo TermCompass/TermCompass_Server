@@ -32,7 +32,8 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.addAllowedOrigin("http://localhost:3000"); // 클라이언트 URL
+                    config.addAllowedOrigin("http://localhost:3000");
+                    config.addAllowedOrigin("http://admin.localhost:3000");
                     config.setAllowCredentials(true);  // 쿠키 전송을 허용
                     config.addAllowedHeader("*");
                     config.addAllowedMethod("*");
