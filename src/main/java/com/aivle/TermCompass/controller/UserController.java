@@ -91,6 +91,7 @@ public class UserController {
         userInfo.put("name", user.getName());
         userInfo.put("email", user.getEmail());
         userInfo.put("account_type", user.getAccount_type());
+        userInfo.put("created_at", user.getCreated_at());
         userInfo.put("businessNumber", user.getBusinessNumber());
 
         return ResponseEntity.ok(userInfo);
