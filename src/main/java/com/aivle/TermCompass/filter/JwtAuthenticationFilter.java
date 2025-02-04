@@ -42,6 +42,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (claims != null) {
                     // 토큰이 유효하면 인증 정보 생성
                     String email = claims.getSubject(); // 토큰의 subject(email) 추출
+                    Long id = claims.get("id", Long.class);
+                    if (id == null) {
+                        Number idNumber = claims.get("id", Number.class);
+                        id = idNumber != null ? idNumber.longValue() : null;
+                    }
                     List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")); // 기본 권한 설정
 
                     Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
@@ -49,6 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
                     System.out.println("Decoded Email: " + email);
+                    System.out.println("Decoded Id: " + id);
                     System.out.println("Authentication set in SecurityContext: " + SecurityContextHolder.getContext().getAuthentication());
 
                     // 요청 속성에 email 추가 (추후 컨트롤러에서 사용 가능)
