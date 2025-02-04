@@ -74,7 +74,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(errorMessages);
         }
 
-        String token = jwtTokenProvider.createToken(user.getEmail());
+        String token = jwtTokenProvider.createToken(user.getEmail(), user.getId());
         if (token == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate token");
         }
@@ -88,6 +88,7 @@ public class UserController {
         response.addCookie(cookie);
 
         Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("id", user.getId());
         userInfo.put("name", user.getName());
         userInfo.put("email", user.getEmail());
         userInfo.put("account_type", user.getAccount_type());

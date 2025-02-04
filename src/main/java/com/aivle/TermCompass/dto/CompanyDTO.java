@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class CompanyDTO {
+    private Long id;
     private String email;
     private String name;
     private User.AccountType account_type;
@@ -14,6 +15,7 @@ public class CompanyDTO {
     private String businessNumber;
 
     public CompanyDTO(User user) {
+        this.id = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
         this.account_type = user.getAccount_type();
