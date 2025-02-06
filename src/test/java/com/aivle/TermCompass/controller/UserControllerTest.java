@@ -2,6 +2,7 @@ package com.aivle.TermCompass.controller;
 
 import com.aivle.TermCompass.domain.User;
 import com.aivle.TermCompass.dto.UserCreateForm;
+import com.aivle.TermCompass.service.JwtTokenProvider;
 import com.aivle.TermCompass.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
