@@ -18,13 +18,13 @@ public class Request {
     @JoinColumn(name = "record_id")
     private Record record;
 
-    @Column
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String request;
 
     @Column
     private String file;
 
-    @Column
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String answer;
 
     @Column
