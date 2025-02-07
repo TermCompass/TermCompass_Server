@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,7 +39,7 @@ public class QuestionController {
 
     @GetMapping("/list")
     public ResponseEntity<Page<QuestionListDTO>> questionList(@RequestParam(value="page", defaultValue = "0") int page) {
-        Page<Question> questionPage = questionService.getList(page);
+        Page<Question> questionPage = questionService.getList(page, Sort.by(Sort.Direction.DESC, "id"));
         Page<QuestionListDTO> dtoPage = questionPage.map(q ->
                 new QuestionListDTO(q.getId(), q.getTitle(), q.getUser().getName(), q.getCreated_at()));
 
