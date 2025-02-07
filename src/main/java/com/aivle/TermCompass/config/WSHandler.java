@@ -116,7 +116,6 @@ public class WSHandler extends TextWebSocketHandler {
                         // 세션을 닫기 전에 메시지 전송을 중지하는 플래그 설정
                         fastAPISession.close(CloseStatus.NORMAL);
                         fastapiWebSocketMap.remove(id); // 맵에서 제거
-                        requestMap.remove(id); // 검토 진행중인 작업 삭제
                         System.out.println("FastAPI 세션 중지됨 : " + id);
                     }
                 } catch (Exception e) {
@@ -124,6 +123,7 @@ public class WSHandler extends TextWebSocketHandler {
                     e.printStackTrace();
                 }
             }
+            requestMap.remove(id); // 검토 진행중인 작업 삭제
         } else {
             // 클라이언트 -> FastAPI 메시지 전달
             WebSocketSession fastAPISession = fastapiWebSocketMap.get(id);
