@@ -21,8 +21,9 @@ public class Request {
     @Column(columnDefinition = "MEDIUMTEXT")
     private String request;
 
-    @Column
-    private String file;
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "file_id")
+    private FileEntity file;
 
     @Column(columnDefinition = "MEDIUMTEXT")
     private String answer;

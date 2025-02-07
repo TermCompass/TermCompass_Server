@@ -57,7 +57,7 @@ public class UserService {
 
         User user = optionalUser.get();
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (user.getAccount_type() == User.AccountType.ADMIN || !passwordEncoder.matches(password, user.getPassword())) {
             return null;
         }
 

@@ -2,10 +2,14 @@ package com.aivle.TermCompass.controller;
 
 import com.aivle.TermCompass.domain.Record;
 import com.aivle.TermCompass.domain.User;
+import com.aivle.TermCompass.dto.RecordDTO;
 import com.aivle.TermCompass.dto.RecordRequestDto;
+import com.aivle.TermCompass.repository.RecordRepository;
 import com.aivle.TermCompass.repository.UserRepository;
+import com.aivle.TermCompass.service.PostService;
 import com.aivle.TermCompass.service.RecordService;
 import com.aivle.TermCompass.service.RequestService;
+import com.aivle.TermCompass.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,56 +17,112 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
 public class RecordController {
     private final RecordService recordService;
-    private final RequestService requestService;
+    private final PostService postService;
+    private final RecordRepository recordRepository;
     private final UserRepository userRepository;
 
-    @PostMapping("/terms")
-    public ResponseEntity<Object> createTermsRecord(@RequestBody RecordRequestDto recordRequestDto) {
+    @PostMapping("/create-terms")
+    public Mono<ResponseEntity<Map<String, Object>>> createTermsRecord(@RequestBody RecordRequestDto recordRequestDto) {
         Optional<User> optionalUser = userRepository.findById(recordRequestDto.getUserId());
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.badRequest().body("User not found.");
+            return Mono.just(ResponseEntity.badRequest().body(Map.of("error", "User not found.")));
         }
 
         User user = optionalUser.get();
+        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), null);
 
-        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), recordRequestDto.getResult());
-        recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(), recordRequestDto.getAnswer());
+        Map<String, Object> requestData = Map.of("text", recordRequestDto.getRequest());
 
-        return ResponseEntity.ok(record);
+        return postService.sendPostRequest("/generate", requestData)
+                .map(response -> {
+                    record.setResult(response);
+                    recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(), response);
+
+                    return ResponseEntity.ok(Map.of(
+                            "answer", response
+                    ));
+                });
     }
 
-    @PostMapping("/chat")
-    public ResponseEntity<Object> createChatRecord(@RequestBody RecordRequestDto recordRequestDto) {
+    @PostMapping("/review-terms")
+    public Mono<ResponseEntity<Map<String, Object>>> reviewTermsRecord(@RequestBody RecordRequestDto recordRequestDto) {
         Optional<User> optionalUser = userRepository.findById(recordRequestDto.getUserId());
+        if (optionalUser.isEmpty()) {
+            return Mono.just(ResponseEntity.badRequest().body(Map.of("error", "User not found.")));
+        }
+
+        User user = optionalUser.get();
+        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), null);
+
+        Map<String, Object> requestData = Map.of("text", recordRequestDto.getRequest());
+
+        return postService.sendPostRequest("/review", requestData)
+                .map(response -> {
+                    record.setResult(response);
+                    recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(), response);
+
+                    return ResponseEntity.ok(Map.of(
+                            "answer", response
+                    ));
+                });
+    }
+
+    @PostMapping("/create-chat")
+    public ResponseEntity<Object> createChatRecord(@RequestBody RecordRequestDto recordRequestDto) {
+        Long userId = recordRequestDto.getUserId();
+        Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.badRequest().body("User not found.");
         }
 
         User user = optionalUser.get();
+        Record record;
 
-        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), recordRequestDto.getResult());
-        recordService.addRequest(record, recordRequestDto.getRequest(), null, recordRequestDto.getAnswer());
+        if (recordRequestDto.getRecordId() != null) {
+            Optional<Record> optionalRecord = recordRepository.findById(recordRequestDto.getRecordId());
+            if (optionalRecord.isPresent()) {
+                record = optionalRecord.get();
+            } else {
+                return ResponseEntity.badRequest().body("Invalid Record ID.");
+            }
+        } else {
+            record = recordService.createRecord(user, Record.RecordType.CHAT, recordRequestDto.getRequest());
+        }
+        String chatbotResponse = recordService.getChatbotResponse(recordRequestDto.getUserId(), recordRequestDto.getRequest());
 
-        return ResponseEntity.ok(record);
+        recordService.addRequest(record, recordRequestDto.getRequest(), null, chatbotResponse);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("recordId", record.getId());
+        response.put("response", chatbotResponse);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/records/{userId}")
-    public ResponseEntity<List<Record>> getRecordsByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<RecordDTO>> getRecordsByUser(@PathVariable Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.badRequest().body(null);
         }
 
         User user = optionalUser.get();
+        List<Record> records = recordService.getRecordsByUser(user);
 
-        return ResponseEntity.ok(recordService.getRecordsByUser(user));
+        List<RecordDTO> recordDTOS = records.stream().map(RecordDTO::new).toList();
+        System.out.println(recordDTOS);
+
+        return ResponseEntity.ok(recordDTOS);
     }
 }
