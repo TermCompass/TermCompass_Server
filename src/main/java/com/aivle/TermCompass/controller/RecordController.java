@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Controller
@@ -98,6 +95,7 @@ public class RecordController {
             }
         } else {
             record = recordService.createRecord(user, Record.RecordType.CHAT, recordRequestDto.getRequest());
+            recordService.incrementChatCount();
         }
         String chatbotResponse = recordService.getChatbotResponse(recordRequestDto.getUserId(), recordRequestDto.getRequest());
 
@@ -121,8 +119,21 @@ public class RecordController {
         List<Record> records = recordService.getRecordsByUser(user);
 
         List<RecordDTO> recordDTOS = records.stream().map(RecordDTO::new).toList();
-        System.out.println(recordDTOS);
 
         return ResponseEntity.ok(recordDTOS);
+    }
+
+    @GetMapping("/records")
+    public ResponseEntity<Map<Record.RecordType, Long>> getRecordCountsByType() {
+        List<Object[]> results = recordRepository.countRecordsByType();
+
+        Map<Record.RecordType, Long> recordCounts = new EnumMap<>(Record.RecordType.class);
+        for (Object[] result : results) {
+            Record.RecordType type = (Record.RecordType) result[0];
+            Long count = (Long) result[1];
+            recordCounts.put(type, count);
+        }
+
+        return ResponseEntity.ok(recordCounts);
     }
 }

@@ -11,4 +11,7 @@ import java.util.List;
 public interface RecordRepository extends JpaRepository<Record, Long> {
     @Query("SELECT r FROM Record r LEFT JOIN FETCH r.requests WHERE r.user = :user")
     List<Record> findAllByUser(@Param("user") User user);
+
+    @Query("SELECT r.record_type, COUNT(r) FROM Record r GROUP BY r.record_type")
+    List<Object[]> countRecordsByType();
 }
