@@ -1,11 +1,15 @@
 package com.aivle.TermCompass.service;
 
+import com.aivle.TermCompass.domain.DailyStats;
 import com.aivle.TermCompass.domain.User;
+import com.aivle.TermCompass.repository.DailyStatsRepository;
 import com.aivle.TermCompass.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -14,6 +18,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DailyStatsRepository dailyStatsRepository;
 
     public User create(String name, String email, String password, User.AccountType account_type) {
         User user = new User();
@@ -93,5 +98,15 @@ public class UserService {
 
     public boolean checkPassword(User user, String oldPassword) {
         return passwordEncoder.matches(oldPassword, user.getPassword());
+    }
+
+    @Transactional
+    public void incrementLoginCount() {
+        LocalDate today = LocalDate.now();
+        DailyStats stats = dailyStatsRepository.findByDate(today)
+                .orElseGet(() -> dailyStatsRepository.save(new DailyStats(null, today, 0, 0, 0, 0)));
+
+        stats.incrementLoginCount();
+        dailyStatsRepository.save(stats);
     }
 }

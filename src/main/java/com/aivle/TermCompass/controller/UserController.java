@@ -2,6 +2,7 @@ package com.aivle.TermCompass.controller;
 
 import com.aivle.TermCompass.domain.User;
 import com.aivle.TermCompass.dto.*;
+import com.aivle.TermCompass.repository.UserRepository;
 import com.aivle.TermCompass.service.JwtTokenProvider;
 import com.aivle.TermCompass.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -28,6 +29,7 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@RequestBody UserCreateForm userCreateForm, BindingResult bindingResult) {
@@ -94,6 +96,8 @@ public class UserController {
         userInfo.put("account_type", user.getAccount_type());
         userInfo.put("created_at", user.getCreated_at());
         userInfo.put("businessNumber", user.getBusinessNumber());
+
+        userService.incrementLoginCount();
 
         return ResponseEntity.ok(userInfo);
     }
@@ -181,5 +185,11 @@ public class UserController {
         } else {
             return ResponseEntity.status(401).body("Unauthorized");
         }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<Integer> getUsersNumber() {
+        int userCount = (int) userRepository.count(); // 성능 최적화
+        return ResponseEntity.ok(userCount);
     }
 }
