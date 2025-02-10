@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class CompanyController {
     private final CompanyService companyService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<SiteDTO>> getCompanies() {
         List<Company> companyList = companyService.findAllCompany();
 

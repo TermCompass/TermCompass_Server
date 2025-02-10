@@ -24,6 +24,9 @@ public class SiteDTO {
         this.logo = company.getLogo();
         this.rank = company.getRank();
         this.link = company.getLink();
+        this.termLists = company.getTermLists() == null ? List.of() : company.getTermLists().stream()
+                .map(TermListDTO::new)
+                .collect(Collectors.toList());
         this.benefits = this.termLists.stream()
                 .filter(term -> term.getEvaluation() == TermList.Evaluation.ADVANTAGE)
                 .map(TermListDTO::getSummary)
