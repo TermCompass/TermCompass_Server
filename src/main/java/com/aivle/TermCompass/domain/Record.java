@@ -23,7 +23,7 @@ public class Record {
     @Column
     private RecordType record_type;
 
-    @Column
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String result;
 
     @OneToMany(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -2,14 +2,18 @@ package com.aivle.TermCompass.controller;
 
 import com.aivle.TermCompass.domain.Record;
 import com.aivle.TermCompass.domain.User;
+import com.aivle.TermCompass.domain.Record.RecordType;
 import com.aivle.TermCompass.dto.RecordDTO;
 import com.aivle.TermCompass.dto.RecordRequestDto;
 import com.aivle.TermCompass.repository.RecordRepository;
 import com.aivle.TermCompass.repository.UserRepository;
+import com.aivle.TermCompass.service.JwtTokenProvider;
 import com.aivle.TermCompass.service.PostService;
 import com.aivle.TermCompass.service.RecordService;
 import com.aivle.TermCompass.service.RequestService;
 import com.aivle.TermCompass.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Mono;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +37,7 @@ public class RecordController {
     private final PostService postService;
     private final RecordRepository recordRepository;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/create-terms")
     public Mono<ResponseEntity<Map<String, Object>>> createTermsRecord(@RequestBody RecordRequestDto recordRequestDto) {
@@ -47,11 +54,11 @@ public class RecordController {
         return postService.sendPostRequest("/generate", requestData)
                 .map(response -> {
                     record.setResult(response);
-                    recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(), response);
+                    recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(),
+                            response);
 
                     return ResponseEntity.ok(Map.of(
-                            "answer", response
-                    ));
+                            "answer", response));
                 });
     }
 
@@ -70,11 +77,11 @@ public class RecordController {
         return postService.sendPostRequest("/review", requestData)
                 .map(response -> {
                     record.setResult(response);
-                    recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(), response);
+                    recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(),
+                            response);
 
                     return ResponseEntity.ok(Map.of(
-                            "answer", response
-                    ));
+                            "answer", response));
                 });
     }
 
@@ -99,7 +106,8 @@ public class RecordController {
         } else {
             record = recordService.createRecord(user, Record.RecordType.CHAT, recordRequestDto.getRequest());
         }
-        String chatbotResponse = recordService.getChatbotResponse(recordRequestDto.getUserId(), recordRequestDto.getRequest());
+        String chatbotResponse = recordService.getChatbotResponse(recordRequestDto.getUserId(),
+                recordRequestDto.getRequest());
 
         recordService.addRequest(record, recordRequestDto.getRequest(), null, chatbotResponse);
 
@@ -125,4 +133,27 @@ public class RecordController {
 
         return ResponseEntity.ok(recordDTOS);
     }
+
+    @PostMapping("/save-generated")
+    public ResponseEntity<Map<String, Object>> saveGenerated(@RequestBody RecordDTO recordDTO, HttpServletRequest request) {
+        
+        // JWT 토큰에서 사용자 ID 추출
+        String token = jwtTokenProvider.getTokenFromCookie(request);
+        // System.out.println("token : "+token);
+        Long userId = jwtTokenProvider.getIdFromToken(token);
+        // System.out.println("userId : "+userId);
+
+        // System.out.println(recordDTO.getResult());
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User not found."));
+        }
+
+        User user = optionalUser.get();
+        recordService.createRecord(user, RecordType.GENERATE, recordDTO.getResult());
+
+        return ResponseEntity.ok().body(Map.of("result", "저장 완료됨."));
+    }
+
 }
