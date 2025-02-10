@@ -6,6 +6,7 @@ import com.aivle.TermCompass.repository.CompanyRepository;
 import com.aivle.TermCompass.repository.TermListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final TermListRepository termListRepository;
 
+    @Transactional
     public List<Company> findAllCompany() {
         return companyRepository.findAll();
     }

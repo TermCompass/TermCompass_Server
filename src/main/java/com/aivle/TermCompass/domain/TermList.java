@@ -30,4 +30,7 @@ public class TermList {
     public enum Evaluation {
         ADVANTAGE, DISADVANTAGE
     }
+
+    public TermList() {
+    }
 }
