@@ -18,14 +18,14 @@ public class Request {
     @JoinColumn(name = "record_id")
     private Record record;
 
-    @Column
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String request;
 
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "file_id")
     private FileEntity file;
 
-    @Column
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String answer;
 
     @Column

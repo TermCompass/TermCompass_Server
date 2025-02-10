@@ -1,13 +1,16 @@
 package com.aivle.TermCompass.dto;
 
 import com.aivle.TermCompass.domain.Record;
-import com.aivle.TermCompass.domain.Request;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class RecordDTO {
     private Long id;
     private String result;
