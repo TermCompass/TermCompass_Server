@@ -94,6 +94,7 @@ public class WSHandler extends TextWebSocketHandler {
         String email = (String) session.getAttributes().get("email");
         String direction = (String) session.getAttributes().get("direction");
 
+        System.out.println("=====================================================================");
         System.out.println(direction + "[Client 메시지 수신] " + email);
 
         // JSON을 Map으로 파싱
@@ -208,7 +209,7 @@ public class WSHandler extends TextWebSocketHandler {
         record.setRecord_type(RecordType.REVIEW);
         String title = total.get(0);
         String first20Chars = title.length() >= 20 ? title.substring(0, 20) : title; // 첫번째가 너무 길지 않게 조절
-        record.setResult(first20Chars); // 첫번째(문서 제목 유력함) 값으로 설정
+        record.setTitle(first20Chars); // 첫번째(문서 제목 유력함) 값으로 설정
         record.setRequests(requests); // record - request 연결되는 지점
 
         requestMap.put(id, request);
@@ -246,18 +247,21 @@ public class WSHandler extends TextWebSocketHandler {
                     throws Exception {
                 // 기존 WebSocketHandler handleTextMessage 로직 재사용
                 String payload = message.getPayload();
+                System.out.println("=====================================================================");
                 System.out.println("[FastAPI 메시지 수신] " + session.getAttributes().get("email") + payload);
 
                 Long sessionId = (Long) session.getAttributes().get("id");
                 WebSocketSession clientSession = clientWebSocketMap.get(sessionId);
-
+                
                 // fastapiWebSocketMap에서 삭제당하지 않았는지 확인 => 삭제당한 경우 이후 처리 안함
                 boolean session_is_live = fastapiWebSocketMap.containsKey(sessionId) ? true : false;
-                if (session_is_live) {
+                if (session_is_live && clientSession != null) {
                     // "type" 값 확인
                     Map<String, Object> jsonMessage = gson.fromJson(payload, mapType);
                     String type = (String) jsonMessage.get("type");
                     System.out.println("type :" + type);
+                    System.out.println("sessionId :" + sessionId);
+                    System.out.println("clientSession :" + clientSession.getAttributes().get("id"));
 
                     // 약관 항목 List인 경우 & 로그인 회원인 경우
                     if (type.equals("total") && !session.getAttributes().get("email").equals("not@user")) {

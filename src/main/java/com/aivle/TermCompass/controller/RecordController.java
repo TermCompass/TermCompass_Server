@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import reactor.core.publisher.Mono;
 
 import java.net.URLDecoder;
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
@@ -47,7 +50,7 @@ public class RecordController {
         }
 
         User user = optionalUser.get();
-        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), null);
+        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), null, null);
 
         Map<String, Object> requestData = Map.of("text", recordRequestDto.getRequest());
 
@@ -70,7 +73,7 @@ public class RecordController {
         }
 
         User user = optionalUser.get();
-        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), null);
+        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), null, null);
 
         Map<String, Object> requestData = Map.of("text", recordRequestDto.getRequest());
 
@@ -104,7 +107,7 @@ public class RecordController {
                 return ResponseEntity.badRequest().body("Invalid Record ID.");
             }
         } else {
-            record = recordService.createRecord(user, Record.RecordType.CHAT, recordRequestDto.getRequest());
+            record = recordService.createRecord(user, Record.RecordType.CHAT, recordRequestDto.getRequest(), null);
         }
         String chatbotResponse = recordService.getChatbotResponse(recordRequestDto.getUserId(),
                 recordRequestDto.getRequest());
@@ -119,24 +122,33 @@ public class RecordController {
     }
 
     @GetMapping("/records/{userId}")
-    public ResponseEntity<List<RecordDTO>> getRecordsByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<RecordDTO>> getRecordsByUser(@PathVariable Long userId,
+            @RequestParam(defaultValue = "false") boolean recordsOnly) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.badRequest().body(null);
         }
 
         User user = optionalUser.get();
-        List<Record> records = recordService.getRecordsByUser(user);
+        List<RecordDTO> recordDTOS;
 
-        List<RecordDTO> recordDTOS = records.stream().map(RecordDTO::new).toList();
-        System.out.println(recordDTOS);
-
+        if (recordsOnly) {
+            recordDTOS = recordService.getRecordsByUserWithoutResult(user).stream()
+                    .map(RecordDTO::new)
+                    .collect(Collectors.toList());
+        } else {
+            recordDTOS = recordService.getRecordsByUser(user).stream()
+                    .map(RecordDTO::new)
+                    .collect(Collectors.toList());
+        }
+    
         return ResponseEntity.ok(recordDTOS);
     }
 
     @PostMapping("/save-generated")
-    public ResponseEntity<Map<String, Object>> saveGenerated(@RequestBody RecordDTO recordDTO, HttpServletRequest request) {
-        
+    public ResponseEntity<Map<String, Object>> saveGenerated(@RequestBody RecordDTO recordDTO,
+            HttpServletRequest request) {
+
         // JWT 토큰에서 사용자 ID 추출
         String token = jwtTokenProvider.getTokenFromCookie(request);
         // System.out.println("token : "+token);
@@ -151,7 +163,7 @@ public class RecordController {
         }
 
         User user = optionalUser.get();
-        recordService.createRecord(user, RecordType.GENERATE, recordDTO.getResult());
+        recordService.createRecord(user, RecordType.GENERATE, recordDTO.getResult(), recordDTO.getTitle());
 
         return ResponseEntity.ok().body(Map.of("result", "저장 완료됨."));
     }

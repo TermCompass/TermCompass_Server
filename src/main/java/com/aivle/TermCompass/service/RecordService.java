@@ -26,11 +26,12 @@ public class RecordService {
     private final RecordRepository recordRepository;
     private final RequestRepository requestRepository;
 
-    public Record createRecord(User user, Record.RecordType recordType, String result) {
+    public Record createRecord(User user, Record.RecordType recordType, String result, String title) {
         Record record = new Record();
         record.setUser(user);
         record.setRecord_type(recordType);
         record.setResult(result);
+        record.setTitle(title);
 
         return recordRepository.save(record);
     }
@@ -51,6 +52,11 @@ public class RecordService {
         return recordRepository.findAllByUser(user);
     }
 
+    @Transactional
+    public List<Record> getRecordsByUserWithoutResult(User user) {
+        return recordRepository.findAllByUserWithoutResult(user);
+    }
+    
     public String getChatbotResponse(Long userId, String request) {
         String url = "https://f4b6-34-16-178-75.ngrok-free.app/chatbot";
 

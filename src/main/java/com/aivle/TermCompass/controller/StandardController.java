@@ -21,12 +21,12 @@ public class StandardController {
     @PostMapping("/standard")
     public ResponseEntity<Object> loadStandards() {
         List<StandardDTO> results = standardRepository.findIdAndFilename();
-        System.out.println("표준 목록");
+        // System.out.println("표준 목록");
 
-        for (StandardDTO standardDTO : results) {
-            System.out.println("id : "+standardDTO.getId());
-            System.out.println("filename : "+standardDTO.getFilename());
-        }
+        // for (StandardDTO standardDTO : results) {
+        //     System.out.println("id : "+standardDTO.getId());
+        //     System.out.println("filename : "+standardDTO.getFilename());
+        // }
         return ResponseEntity.ok(results);
     }
 
@@ -34,9 +34,9 @@ public class StandardController {
     public ResponseEntity<Object> getTargetStandard(@PathVariable Long id) {
         Standard result = standardRepository.findById(id).get();
         
-        System.out.println("표준");
-        System.out.println("id : " + result.getId());
-        System.out.println("filename : " + result.getFilename());
+        // System.out.println("표준");
+        // System.out.println("id : " + result.getId());
+        // System.out.println("filename : " + result.getFilename());
 
         return ResponseEntity.ok(result);
     }

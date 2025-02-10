@@ -11,4 +11,7 @@ import java.util.List;
 public interface RecordRepository extends JpaRepository<Record, Long> {
     @Query("SELECT r FROM Record r LEFT JOIN FETCH r.requests WHERE r.user = :user")
     List<Record> findAllByUser(@Param("user") User user);
+
+    @Query("SELECT new com.aivle.TermCompass.domain.Record(r.id, r.user, r.record_type, r.title, r.createdDate) FROM Record r WHERE r.user = :user")
+    List<Record> findAllByUserWithoutResult(@Param("user") User user);
 }
