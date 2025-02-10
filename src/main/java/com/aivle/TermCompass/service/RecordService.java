@@ -9,6 +9,8 @@ import com.aivle.TermCompass.repository.RequestRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,9 @@ public class RecordService {
 
     private final RecordRepository recordRepository;
     private final RequestRepository requestRepository;
+    
+    @Value("${ngrok-host}")
+    private String ngrokhost;
 
     public Record createRecord(User user, Record.RecordType recordType, String result, String title) {
         Record record = new Record();
@@ -58,7 +63,7 @@ public class RecordService {
     }
     
     public String getChatbotResponse(Long userId, String request) {
-        String url = "https://f4b6-34-16-178-75.ngrok-free.app/chatbot";
+        String url = "https://"+ngrokhost+"/chatbot";
 
         // 🔹 요청 데이터 설정
         Map<String, Object> requestBody = new HashMap<>();

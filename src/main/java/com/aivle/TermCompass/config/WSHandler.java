@@ -1,6 +1,7 @@
 package com.aivle.TermCompass.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
@@ -42,6 +43,9 @@ public class WSHandler extends TextWebSocketHandler {
     private final Map<Long, WebSocketSession> clientWebSocketMap = new ConcurrentHashMap<>();
     private final Map<Long, WebSocketSession> fastapiWebSocketMap = new ConcurrentHashMap<>();
     private final Map<Long, Request> requestMap = new ConcurrentHashMap<>();
+
+    @Value("${fastapi-host}")
+    private String fastapi;
 
     Gson gson = new Gson();
     Type mapType = new TypeToken<Map<String, Object>>() {
@@ -238,7 +242,7 @@ public class WSHandler extends TextWebSocketHandler {
     // FastAPI 연결 생성
     private void connectToFastAPI(Long id, String email) {
         WebSocketClient client = new StandardWebSocketClient();
-        String url = "ws://localhost:8000/ws";
+        String url = "ws://"+fastapi+":8000/ws";
 
         // WebSocketHandler의 handleTextMessage를 재사용
         CompletableFuture<WebSocketSession> fastapiFuture = client.execute(new TextWebSocketHandler() {

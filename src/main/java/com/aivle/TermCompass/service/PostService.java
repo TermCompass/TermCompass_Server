@@ -1,5 +1,6 @@
 package com.aivle.TermCompass.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,9 +11,12 @@ import java.util.Map;
 @Service
 public class PostService {
     private final WebClient webClient;
+    
+    @Value("${fastapi-host}")
+    private String fastapi;
 
     public PostService(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8000").build();
+        this.webClient = webClientBuilder.baseUrl("http://"+fastapi+":8000").build();
     }
 
     public Mono<String> sendPostRequest(String endpoint, Map<String, Object> requestData) {
