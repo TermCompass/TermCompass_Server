@@ -3,6 +3,7 @@ package com.aivle.TermCompass.config;
 import com.aivle.TermCompass.filter.JwtAuthenticationFilter;
 import com.aivle.TermCompass.service.JwtTokenProvider;
 import jakarta.servlet.http.Cookie;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,10 @@ import org.springframework.web.cors.CorsConfiguration;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${spring-host}")
+    private String hostname;
+
     private final JwtTokenProvider jwtTokenProvider;
 
     public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -31,10 +36,9 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.addAllowedOriginPattern("*");
+                    // 여기서 '*'를 사용하지 않고, 특정 origin을 명시적으로 설정
+                    config.addAllowedOrigin("https://" + hostname + ":8000");
                     config.setAllowCredentials(true);  // 쿠키 전송을 허용
-                    config.addAllowedHeader("*");
-                    config.addAllowedMethod("*");
                     return config;
                 }))
                 .csrf(AbstractHttpConfigurer::disable)

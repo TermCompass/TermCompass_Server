@@ -1,5 +1,6 @@
 package com.aivle.TermCompass.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -26,14 +27,18 @@ import com.aivle.TermCompass.service.JwtTokenProvider;
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
 
+    @Value("${spring-host}")
+    private String hostname;
+
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final WSHandler wsHandler;
 
     @Override
     public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
+        System.out.println("Hostname: " + hostname); // 값이 제대로 주입되었는지 확인
         registry.addHandler(wsHandler, "/ws")
-                .setAllowedOrigins("*")
+                .setAllowedOrigins("https://" + hostname + ":8000", "http://localhost:8000") // WebSocket의 CORS 설정
                 .addInterceptors(new WebSocketAuthInterceptor(wsHandler)); // JWT 인증을 위한 인터셉터 추가
     }
 
@@ -51,7 +56,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
         public boolean beforeHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,
                 @NonNull WebSocketHandler wsHandler, @NonNull Map<String, Object> attributes)
                 throws Exception {
-                    
+
             // URL에서 JWT 토큰 추출 (예: ws://localhost:8080/ws?token=JWT_TOKEN)
             HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
             String token = jwtTokenProvider.getTokenFromCookie(servletRequest);
@@ -72,13 +77,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
                     System.out.println("User not found in DB");
                 }
             }
-            
+
             // 비로그인 사용자의 경우 ( 토큰 정보 추출 실패시 )
             catch (IllegalArgumentException e) {
                 email = "not@user";
                 do {
                     id = (long) (Math.random() * 10000) + 10000; // 숫자 랜덤 생성
-                } while (this.wsHandler.containsClientAndFastAPIId(id) || userRepository.existsById(id)); // Use the new method
+                } while (this.wsHandler.containsClientAndFastAPIId(id) || userRepository.existsById(id)); // Use the new
+                                                                                                          // method
             }
 
             // session에 정보 저장

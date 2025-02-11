@@ -37,3 +37,6 @@ out/
 ### VS Code ###
 .vscode/
 **/**/additional-spring-configuration-metadata.json
+
+# 리액트 프로젝트 out폴더
+src/main/resources/static

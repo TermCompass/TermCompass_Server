@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-// @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RestController
 public class UserController {
     private final UserService userService;

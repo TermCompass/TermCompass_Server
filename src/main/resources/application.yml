@@ -20,5 +20,6 @@ logging:
       springframework:
         security: DEBUG
 
+spring-host: ${SPRING_HOST}
 fastapi-host: ${FASTAPI_HOST}
 ngrok-host: ${NGROK_HOST}
