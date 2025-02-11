@@ -43,7 +43,7 @@ public class SecurityConfig {
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/login", "/signup").permitAll() // 인증 없이 접근 가능
+                        .requestMatchers("/","/login", "/signup").permitAll() // 인증 없이 접근 가능
                         .requestMatchers("/change-password").authenticated() // JWT 인증 필요
                         .anyRequest().permitAll())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터 추가
