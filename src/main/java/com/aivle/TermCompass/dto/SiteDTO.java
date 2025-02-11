@@ -12,7 +12,7 @@ public class SiteDTO {
     private Long id;
     private String name;
     private String logo;
-    private Company.Rank rank;
+    private Company.Grade grade;
     private String link;
     private List<TermListDTO> termLists;
     private List<String> benefits;
@@ -22,7 +22,7 @@ public class SiteDTO {
         this.id = company.getId();
         this.name = company.getName();
         this.logo = company.getLogo();
-        this.rank = company.getRank();
+        this.grade = company.getGrade();
         this.link = company.getLink();
         this.termLists = company.getTermLists() == null ? List.of() : company.getTermLists().stream()
                 .map(TermListDTO::new)

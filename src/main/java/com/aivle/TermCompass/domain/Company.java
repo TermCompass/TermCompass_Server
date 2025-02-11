@@ -19,7 +19,7 @@ public class Company {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Rank rank;
+    private Grade grade;
 
     private String logo;
 
@@ -28,7 +28,7 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TermList> termLists = new ArrayList<>();
 
-    public enum Rank {
+    public enum Grade {
         A, B, C, D, E
     }
 
