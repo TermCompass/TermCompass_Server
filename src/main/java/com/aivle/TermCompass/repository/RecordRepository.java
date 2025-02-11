@@ -14,4 +14,7 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     @Query("SELECT new com.aivle.TermCompass.domain.Record(r.id, r.user, r.record_type, r.title, r.createdDate) FROM Record r WHERE r.user = :user")
     List<Record> findAllByUserWithoutResult(@Param("user") User user);
+
+    @Query("SELECT r.record_type, COUNT(r) FROM Record r GROUP BY r.record_type")
+    List<Object[]> countRecordsByType();
 }

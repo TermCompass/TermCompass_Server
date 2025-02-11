@@ -27,11 +27,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Controller
@@ -108,6 +104,7 @@ public class RecordController {
             }
         } else {
             record = recordService.createRecord(user, Record.RecordType.CHAT, recordRequestDto.getRequest(), null);
+            recordService.incrementChatCount();
         }
         String chatbotResponse = recordService.getChatbotResponse(recordRequestDto.getUserId(),
                 recordRequestDto.getRequest());
@@ -146,8 +143,7 @@ public class RecordController {
     }
 
     @PostMapping("/save-generated")
-    public ResponseEntity<Map<String, Object>> saveGenerated(@RequestBody RecordDTO recordDTO,
-            HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> saveGenerated(@RequestBody RecordDTO recordDTO, HttpServletRequest request) {
 
         // JWT 토큰에서 사용자 ID 추출
         String token = jwtTokenProvider.getTokenFromCookie(request);
@@ -168,4 +164,18 @@ public class RecordController {
         return ResponseEntity.ok().body(Map.of("result", "저장 완료됨."));
     }
 
+
+    @GetMapping("/records")
+    public ResponseEntity<Map<Record.RecordType, Long>> getRecordCountsByType() {
+        List<Object[]> results = recordRepository.countRecordsByType();
+
+        Map<Record.RecordType, Long> recordCounts = new EnumMap<>(Record.RecordType.class);
+        for (Object[] result : results) {
+            Record.RecordType type = (Record.RecordType) result[0];
+            Long count = (Long) result[1];
+            recordCounts.put(type, count);
+        }
+
+        return ResponseEntity.ok(recordCounts);
+    }
 }
