@@ -30,9 +30,11 @@ public class CompanyController {
         return ResponseEntity.ok(siteDTOList);
     }
 
-    @GetMapping("/{companyName}")
-    public ResponseEntity<SiteDTO> getTerms(@PathVariable String companyName) {
-        Company company = companyService.findByName(companyName);
+    @GetMapping("/{link}")
+    public ResponseEntity<SiteDTO> getTerms(@PathVariable String link) {
+        System.out.println("companyLink : "+link);
+        Company company = companyService.findByLink(link);
+        System.out.println("company : "+company);
 
         SiteDTO siteDTO = new SiteDTO(company);
 

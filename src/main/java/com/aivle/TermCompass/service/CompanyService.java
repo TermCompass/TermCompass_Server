@@ -27,7 +27,13 @@ public class CompanyService {
     }
 
     public Company findByName(String name) {
-        Optional<Company> optionalCompany = companyRepository.findByLink(name);
+        Optional<Company> optionalCompany = companyRepository.findByName(name);
+
+        return optionalCompany.orElse(null);
+    }
+
+    public Company findByLink(String link) {
+        Optional<Company> optionalCompany = companyRepository.findByLink(link);
 
         return optionalCompany.orElse(null);
     }
