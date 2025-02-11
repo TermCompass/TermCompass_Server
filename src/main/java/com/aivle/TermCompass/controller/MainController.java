@@ -5,22 +5,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.aivle.TermCompass.dto.QuestionDetailDTO;
-import com.aivle.TermCompass.service.QuestionService;
-
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequiredArgsConstructor
 public class MainController {
-    private final QuestionService questionService;
 
     @GetMapping("/")
     public String handleRequest(HttpServletRequest request, Model model) {
 
         String host = request.getHeader("Host");
-        System.out.println("=======================host : "+host);
 
         if (host != null && host.startsWith("admin.")) {
             return "admin-login.html"; // admin.html 반환
