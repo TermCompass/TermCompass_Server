@@ -3,31 +3,22 @@ package com.aivle.TermCompass.controller;
 import com.aivle.TermCompass.domain.FileEntity;
 import com.aivle.TermCompass.domain.Question;
 import com.aivle.TermCompass.domain.User;
-import com.aivle.TermCompass.dto.AnswerForm;
 import com.aivle.TermCompass.dto.QuestionDetailDTO;
 import com.aivle.TermCompass.dto.QuestionListDTO;
-import com.aivle.TermCompass.repository.QuestionRepository;
 import com.aivle.TermCompass.service.FileService;
 import com.aivle.TermCompass.service.QuestionService;
 import com.aivle.TermCompass.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.naming.Binding;
 import java.io.IOException;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RequestMapping("/board")
 @RequiredArgsConstructor

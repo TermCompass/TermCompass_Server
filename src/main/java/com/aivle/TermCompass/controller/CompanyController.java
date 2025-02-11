@@ -1,9 +1,7 @@
 package com.aivle.TermCompass.controller;
 
 import com.aivle.TermCompass.domain.Company;
-import com.aivle.TermCompass.domain.TermList;
 import com.aivle.TermCompass.dto.SiteDTO;
-import com.aivle.TermCompass.dto.TermListDTO;
 import com.aivle.TermCompass.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -3,7 +3,6 @@ package com.aivle.TermCompass.config;
 import com.aivle.TermCompass.filter.JwtAuthenticationFilter;
 import com.aivle.TermCompass.service.JwtTokenProvider;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;

@@ -1,6 +1,5 @@
 package com.aivle.TermCompass.dto;
 
-import com.aivle.TermCompass.domain.Answer;
 import com.aivle.TermCompass.domain.Question;
 import com.aivle.TermCompass.domain.User;
 import lombok.Getter;

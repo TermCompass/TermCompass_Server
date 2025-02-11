@@ -36,3 +36,4 @@ out/
 
 ### VS Code ###
 .vscode/
+**/**/additional-spring-configuration-metadata.json

@@ -10,9 +10,6 @@ import com.aivle.TermCompass.repository.UserRepository;
 import com.aivle.TermCompass.service.JwtTokenProvider;
 import com.aivle.TermCompass.service.PostService;
 import com.aivle.TermCompass.service.RecordService;
-import com.aivle.TermCompass.service.RequestService;
-import com.aivle.TermCompass.service.UserService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import reactor.core.publisher.Mono;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Controller
