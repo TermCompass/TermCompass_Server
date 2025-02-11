@@ -26,9 +26,10 @@ public class AnswerController {
     private final UserService userService;
 
     @PostMapping("/create/{id}")
-    public ResponseEntity<String> createAnswer(@PathVariable("id") Long id, @Valid @RequestBody AnswerForm answerForm,
+    public ResponseEntity<String> createAnswer(@PathVariable Long id, @Valid @RequestBody AnswerForm answerForm,
                                                BindingResult bindingResult, HttpServletRequest httpServletRequest
     ) {
+        System.out.println("==============================create/23=============================================");
         Question question = this.questionService.findById(id);
         String email = (String) httpServletRequest.getAttribute("email");
         if (email == null) {
