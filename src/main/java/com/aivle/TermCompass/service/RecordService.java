@@ -65,7 +65,7 @@ public class RecordService {
     }
     
     public String getChatbotResponse(Long userId, String request) {
-        String url = "http://"+ngrokhost+"/chatbot";
+        String url = "http://"+ngrokhost+":8000/chatbot";
 
         // 🔹 요청 데이터 설정
         Map<String, Object> requestBody = new HashMap<>();

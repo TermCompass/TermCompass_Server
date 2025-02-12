@@ -40,3 +40,4 @@ out/
 
 # 리액트 프로젝트 out폴더
 src/main/resources/static
+env-file.env
