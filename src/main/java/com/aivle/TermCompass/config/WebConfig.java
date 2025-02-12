@@ -23,13 +23,13 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("https://" + hostname + ":8000")
-                .allowedOrigins("http://admin." + hostname + ":8000")
-                .allowCredentials(true)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
-    }
+public void addCorsMappings(@NonNull CorsRegistry registry) {
+    registry.addMapping("/**")
+            .allowedOrigins("https://" + hostname)
+                .allowedOrigins("http://admin." + hostname)
+            .allowCredentials(true)
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+}
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {

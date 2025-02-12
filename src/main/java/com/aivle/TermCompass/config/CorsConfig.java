@@ -17,7 +17,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("https://" + hostname + ":8000");
+        config.addAllowedOrigin("https://" + hostname);
         config.setAllowCredentials(true);  // 쿠키 전송을 허용
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);

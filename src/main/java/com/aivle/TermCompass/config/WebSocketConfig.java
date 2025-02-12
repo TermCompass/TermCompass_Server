@@ -38,8 +38,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
         System.out.println("Hostname: " + hostname); // 값이 제대로 주입되었는지 확인
         registry.addHandler(wsHandler, "/ws")
-                .setAllowedOrigins("https://" + hostname + ":8000", "http://localhost:8000") // WebSocket의 CORS 설정
-                .addInterceptors(new WebSocketAuthInterceptor(wsHandler)); // JWT 인증을 위한 인터셉터 추가
+        .setAllowedOrigins("https://" + hostname) // WebSocket의 CORS 설정
+        .setAllowedOrigins("https://localhost:8000") // WebSocket의 CORS 설정
+        .addInterceptors(new WebSocketAuthInterceptor(wsHandler)); // JWT 인증을 위한 인터셉터 추가
     }
 
     // WebSocket 인증을 위한 인터셉터
@@ -57,7 +58,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 @NonNull WebSocketHandler wsHandler, @NonNull Map<String, Object> attributes)
                 throws Exception {
 
-            // URL에서 JWT 토큰 추출 (예: ws://localhost:8080/ws?token=JWT_TOKEN)
+            // URL에서 JWT 토큰 추출 
             HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
             String token = jwtTokenProvider.getTokenFromCookie(servletRequest);
 

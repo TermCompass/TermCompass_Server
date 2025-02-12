@@ -8,7 +8,6 @@ import com.aivle.TermCompass.dto.RecordRequestDto;
 import com.aivle.TermCompass.repository.RecordRepository;
 import com.aivle.TermCompass.repository.UserRepository;
 import com.aivle.TermCompass.service.JwtTokenProvider;
-import com.aivle.TermCompass.service.PostService;
 import com.aivle.TermCompass.service.RecordService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import reactor.core.publisher.Mono;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,56 +26,9 @@ import java.util.stream.Collectors;
 @Controller
 public class RecordController {
     private final RecordService recordService;
-    private final PostService postService;
     private final RecordRepository recordRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @PostMapping("/create-terms")
-    public Mono<ResponseEntity<Map<String, Object>>> createTermsRecord(@RequestBody RecordRequestDto recordRequestDto) {
-        Optional<User> optionalUser = userRepository.findById(recordRequestDto.getUserId());
-        if (optionalUser.isEmpty()) {
-            return Mono.just(ResponseEntity.badRequest().body(Map.of("error", "User not found.")));
-        }
-
-        User user = optionalUser.get();
-        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), null, null);
-
-        Map<String, Object> requestData = Map.of("text", recordRequestDto.getRequest());
-
-        return postService.sendPostRequest("/generate", requestData)
-                .map(response -> {
-                    record.setResult(response);
-                    recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(),
-                            response);
-
-                    return ResponseEntity.ok(Map.of(
-                            "answer", response));
-                });
-    }
-
-    @PostMapping("/review-terms")
-    public Mono<ResponseEntity<Map<String, Object>>> reviewTermsRecord(@RequestBody RecordRequestDto recordRequestDto) {
-        Optional<User> optionalUser = userRepository.findById(recordRequestDto.getUserId());
-        if (optionalUser.isEmpty()) {
-            return Mono.just(ResponseEntity.badRequest().body(Map.of("error", "User not found.")));
-        }
-
-        User user = optionalUser.get();
-        Record record = recordService.createRecord(user, recordRequestDto.getRecordType(), null, null);
-
-        Map<String, Object> requestData = Map.of("text", recordRequestDto.getRequest());
-
-        return postService.sendPostRequest("/review", requestData)
-                .map(response -> {
-                    record.setResult(response);
-                    recordService.addRequest(record, recordRequestDto.getRequest(), recordRequestDto.getFile(),
-                            response);
-
-                    return ResponseEntity.ok(Map.of(
-                            "answer", response));
-                });
-    }
 
     @PostMapping("/create-chat")
     public ResponseEntity<Object> createChatRecord(@RequestBody RecordRequestDto recordRequestDto) {
