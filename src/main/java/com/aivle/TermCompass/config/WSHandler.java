@@ -242,6 +242,7 @@ public class WSHandler extends TextWebSocketHandler {
     private void connectToFastAPI(Long id, String email) {
         WebSocketClient client = new StandardWebSocketClient();
         String url = "ws://"+fastapi+":8000/ws";
+        System.out.println("=============================== ws url: "+url+"================================================================================");
 
         // WebSocketHandler의 handleTextMessage를 재사용
         CompletableFuture<WebSocketSession> fastapiFuture = client.execute(new TextWebSocketHandler() {

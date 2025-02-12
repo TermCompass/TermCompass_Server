@@ -22,15 +22,6 @@ public class WebConfig implements WebMvcConfigurer {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @Override
-public void addCorsMappings(@NonNull CorsRegistry registry) {
-    registry.addMapping("/**")
-            .allowedOrigins("https://" + hostname)
-                .allowedOrigins("http://admin." + hostname)
-            .allowCredentials(true)
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
-}
-
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtTokenProvider);
