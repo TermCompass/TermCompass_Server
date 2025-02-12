@@ -41,8 +41,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
         // WebSocket 핸들러를 등록하고 CORS 설정 및 인증 인터셉터 추가
         registry.addHandler(wsHandler, "/ws")
                 .setAllowedOrigins(
-                        "https://" + hostname, // WebSocket의 CORS 설정 (https://kyj9447.kr)
-                        "https://localhost:8000" // WebSocket의 CORS 설정 (https://localhost:8000)
+                        "https://" + hostname, // WebSocket의 CORS 설정 
+                        "https://localhost:8000" // WebSocket의 CORS 설정
                 )
                 .addInterceptors(new WebSocketAuthInterceptor(wsHandler)); // JWT 인증을 위한 인터셉터 추가
     }

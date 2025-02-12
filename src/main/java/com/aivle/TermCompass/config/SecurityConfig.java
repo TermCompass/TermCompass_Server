@@ -42,8 +42,8 @@ public class SecurityConfig {
                     CorsConfiguration corsConfig = new CorsConfiguration();
                     // hostname을 사용하여 CORS 설정
                     corsConfig.setAllowedOrigins(Arrays.asList(
-                            "https://" + hostname, // https://kyj9447.kr
-                            "https://admin." + hostname, // https://admin.kyj9447.kr
+                            "https://" + hostname, 
+                            "https://admin." + hostname,
                             "http://localhost:3000" // 개발용 클라이언트
                     ));
                     corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
