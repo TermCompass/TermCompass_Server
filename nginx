@@ -1,0 +1,46 @@
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl ipv6only=on;
+    server_name 도메인;
+
+    ssl_certificate /etc/letsencrypt/live/도메인/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/도메인/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        # CORS 헤더 추가
+        add_header 'Access-Control-Allow-Origin' '*';  # 모든 출처에서 요청 허용
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';  # 허용된 HTTP 메서드
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-Requested-With';  # 허용된 헤더
+
+        # CORS OPTIONS 요청 처리
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-Requested-With';
+            return 204;  # No Content 응답
+        }
+
+        # WebSocket을 위한 업그레이드 헤더
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+
+        # WebSocket 핸들러의 타임아웃 설정
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+
+        proxy_pass http://localhost:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name 도메인;
+    return 301 https://$host$request_uri;
+}

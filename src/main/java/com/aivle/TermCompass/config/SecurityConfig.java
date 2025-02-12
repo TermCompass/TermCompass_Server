@@ -52,7 +52,7 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers("/", "/login", "/signup").permitAll() // 로그인, 회원가입은 인증 없이 접근
+                        // .requestMatchers("/", "/login", "/signup").permitAll() // 로그인, 회원가입은 인증 없이 접근
                         .requestMatchers("/change-password").authenticated() // 비밀번호 변경은 인증 필요
                         .anyRequest().permitAll()) // 다른 모든 요청은 인증 없이 접근
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
