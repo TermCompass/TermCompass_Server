@@ -17,6 +17,7 @@ import com.aivle.TermCompass.domain.Record.RecordType;
 import com.aivle.TermCompass.repository.RecordRepository;
 import com.aivle.TermCompass.repository.RequestRepository;
 import com.aivle.TermCompass.repository.UserRepository;
+import com.aivle.TermCompass.service.RecordService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -38,6 +39,7 @@ public class WSHandler extends TextWebSocketHandler {
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
     private final RecordRepository recordRepository;
+    private final RecordService recordService;
 
     private final Map<Long, WebSocketSession> clientWebSocketMap = new ConcurrentHashMap<>();
     private final Map<Long, WebSocketSession> fastapiWebSocketMap = new ConcurrentHashMap<>();
@@ -313,6 +315,9 @@ public class WSHandler extends TextWebSocketHandler {
                         recordRepository.save(requestMap.get(sessionId).getRecord());
                         // 현재 request 최종으로 repository에 저장
                         requestRepository.save(requestMap.get(sessionId));
+
+                        // 이용 통계 +1
+                        recordService.incrementReviewCount();
 
                         // 클라이언트 접속상태이면 저장 완료 알림
                         if (clientWebSocketMap.containsKey(sessionId)) {
