@@ -106,6 +106,7 @@ public class RecordController {
 
         User user = optionalUser.get();
         recordService.createRecord(user, RecordType.GENERATE, recordDTO.getResult(), recordDTO.getTitle());
+        recordService.incrementGenerateCount();
 
         return ResponseEntity.ok().body(Map.of("result", "저장 완료됨."));
     }
